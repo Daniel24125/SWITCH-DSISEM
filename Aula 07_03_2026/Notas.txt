@@ -1,0 +1,9 @@
+DDRx - Define se um PIN é uma entrada ou uma saída. 
+Data Direction registry
+
+WDx - Write Data
+RDx - Read Data
+
+Registo Port - Onde eu escrevo para ativar ou desativa um PIN
+
+No Registo DDR, se não configurarmos nada, eles são definidos como entradas. 
