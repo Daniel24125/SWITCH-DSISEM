@@ -16,25 +16,6 @@
 #define GPIO_MODE_IN  0
 #define GPIO_MODE_OUT 1
 
-// GPIO Levels
-// #define GPIO_LEVEL_LOW  0
-// #define GPIO_LEVEL_HIGH 1
-
-// typedef struct {
-//     uint32_t GPFSEL[7]; /*!< GPIO Function Select */
-//     uint32_t GPSET[3];  /*!< GPIO Pin Output Set */
-//     uint32_t GPCLR[3];  /*!< GPIO Pin Output Clear */
-//     uint32_t GPLEV[3];  /*!< GPIO Pin Level */
-//     uint32_t GPEDS[3];  /*!< GPIO Pin Event Detect Status */
-//     uint32_t GPREN[3];  /*!< GPIO Pin Rising Edge Detect Enable */
-//     uint32_t GPFEN[3];  /*!< GPIO Pin Falling Edge Detect Enable */
-//     uint32_t GPHEN[3];  /*!< GPIO Pin High Detect Enable */
-//     uint32_t GPLEN[3];  /*!< GPIO Pin Low Detect Enable */
-//     uint32_t GPAREN[3]; /*!< GPIO Pin Async. Rising Edge Detect */
-//     uint32_t GPAFEN[3]; /*!< GPIO Pin Async. Falling Edge Detect */
-//     uint32_t GPPUD;     /*!< GPIO Pin Pull-up/down Enable */
-//     uint32_t GPPUDCLK[3];/*!< GPIO Pin Pull-up/down Enable Clock */
-// } bcm2837_gpio_registers_t; 
 
 /**
  * @brief Maps the GPIO registers to the process's virtual memory space.
