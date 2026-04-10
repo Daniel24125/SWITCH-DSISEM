@@ -32,6 +32,8 @@ void set_pwm_mode(bmc2711_pwm_registers_t *regs, int rangeScale){
  * Escolher:
  *  Frequencia - queremos 54Mhz
  *  divisor - queremos 27
+ * 
+ * 
  *  N - chanel0_range
  *  duty_cycle - definido com o channel_data (DT = data/range)
  *  Ativar pwm - PWEN1

@@ -21,6 +21,11 @@
 #define GPIO_MODE_OUT 1
 #define GPIO_MODE_ALT_0 4 //100 - PWM for GPIO12
 
+//clock
+#define PASSWD 0x5A
+#define ENAB_BIT 4
+#define BUSY_BIT 7
+#define SRC 1
 
 
 /**
@@ -73,7 +78,7 @@ bmc2711_pwm_registers_t *map_pwm_registers(void){
     close(mem_fd); // FD is no longer needed after mapping
 
     if (pwm_map == MAP_FAILED) {
-        perror("Error mapping GPIO memory");
+        perror("Error mapping PWM memory");
         return NULL;
     }
 
@@ -90,6 +95,11 @@ void setClockDivider(int mem_fd){
         mem_fd,
         BCM2735_CM_PWMDIV 
     );
+
+    if (divider_map == MAP_FAILED) {
+        perror("Error mapping GPCD memory");
+        return NULL;
+    }
 
     //Colocar o valor que queremos no DIVI
 }
@@ -110,28 +120,26 @@ void setClock(){
         BCM2735_CM_PWMCTL 
     );
 
-    //Enable a zero
+    if (control_map == MAP_FAILED) {
+        perror("Error mapping GPCC memory");
+        return NULL;
+    }
 
-    //While no busy ate ele ficar a 0
+    //Disable clock generator
+    *control_map = ((*control_map & ~(0b11111111<<24)) | (PASSWD<<24)) & ~(1<<ENAB_BIT);
+
+    //Wait for BUSY TO BE LOW
+    while (*control_map & (1<<BUSY_BIT) != 0)
+
+    //Set SRC to 1 - Oscillator
+    *control_map 
 
     //colocar a src a 1
 
     //chamar a função para o divider
+    setClockDivider(mem_fd);
 
     //Enable a 1
-}
-
-void setClockControl&Divider(){
-    
-
-    
-
-    close(mem_fd); // FD is no longer needed after mapping
-
-    if (control_map == MAP_FAILED || divider_map = MAP_FAILED) {
-        perror("Error mapping GPIO memory");
-        return NULL;
-    }
 }
 
 /**
@@ -163,7 +171,7 @@ int main(int argc, char *argv[]) {
     }
 
     // 1.2. Map Clock
-    setClockControl&Divider();
+    setClock();
 
 
     // 1.3. Map PWM
