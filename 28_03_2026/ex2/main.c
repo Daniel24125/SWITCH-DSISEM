@@ -6,10 +6,14 @@
 #include <unistd.h>
 
 #include "setGPIO.h"
+#include "setPWM.h"
 
 #define LED_PIN 12
 #define RPI4_PERIPH_BASE 0xFE000000
 #define RPI4_GPIO_BASE (RPI4_PERIPH_BASE + 0x200000)
+#define PRI4_PWM_BASE (RPI4_PERIPH_BASE + 0x20C000)
+#define BCM2735_CM_PWMCTL (RPI4_PERIPH_BASE + 0x1010A0)
+#define BCM2735_CM_PWMDIV (RPI4_PERIPH_BASE + 0x1010A4)
 #define ADDRESS_RANGE (4 * 1024) // 4KB memory page size
 
 // GPIO Modes
@@ -17,16 +21,6 @@
 #define GPIO_MODE_OUT 1
 #define GPIO_MODE_ALT_0 4 //100 - PWM for GPIO12
 
-typedef struct {
-    uint32_t CONTROL;
-    uint32_t STATUS;
-    uint32_t DMAC[2];
-    uint32_t CHN0_RANGE; //maximum value for PWM_CHANNEL0_DATA
-    uint32_t CHN0_DATA; //Pulse Width for CHANNEL0 (from 0 to PWM_CHN0_RANGE)
-    uint32_t FIF1[2]; // PWM FIFO Input
-    uint32_t CHN1_RANGE;
-    uint32_t CHN1_DATA;
-} bmc2711_pwm_registers_t;
 
 
 /**
@@ -73,7 +67,7 @@ bmc2711_pwm_registers_t *map_pwm_registers(void){
         PROT_READ | PROT_WRITE, 
         MAP_SHARED,
         mem_fd,
-        RPI4_GPIO_BASE 
+        PRI4_PWM_BASE 
     );
 
     close(mem_fd); // FD is no longer needed after mapping
@@ -84,6 +78,60 @@ bmc2711_pwm_registers_t *map_pwm_registers(void){
     }
 
     return (bmc2711_pwm_registers_t *)pwm_map;
+}
+
+void setClockDivider(int mem_fd){
+
+    void *divider_map = mmap(
+        NULL,
+        sizeof(uint32_t),
+        PROT_READ | PROT_WRITE, 
+        MAP_SHARED,
+        mem_fd,
+        BCM2735_CM_PWMDIV 
+    );
+
+    //Colocar o valor que queremos no DIVI
+}
+
+void setClock(){
+    int mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
+    if (mem_fd < 0) {
+        perror("Error opening /dev/mem");
+        return NULL;
+    }
+
+    void *control_map = mmap(
+        NULL,
+        sizeof(uint32_t),
+        PROT_READ | PROT_WRITE, 
+        MAP_SHARED,
+        mem_fd,
+        BCM2735_CM_PWMCTL 
+    );
+
+    //Enable a zero
+
+    //While no busy ate ele ficar a 0
+
+    //colocar a src a 1
+
+    //chamar a função para o divider
+
+    //Enable a 1
+}
+
+void setClockControl&Divider(){
+    
+
+    
+
+    close(mem_fd); // FD is no longer needed after mapping
+
+    if (control_map == MAP_FAILED || divider_map = MAP_FAILED) {
+        perror("Error mapping GPIO memory");
+        return NULL;
+    }
 }
 
 /**
@@ -107,14 +155,18 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    // 1. Map GPIO
+    // 1.1. Map GPIO
     bcm2837_gpio_registers_t *gpio_regs = map_gpio_registers();
     if (!gpio_regs) {
         fprintf(stderr, "Error: Could not map GPIO. Are you running as root (sudo)?\n");
         return EXIT_FAILURE;
     }
 
-    // 2. Configure PWM
+    // 1.2. Map Clock
+    setClockControl&Divider();
+
+
+    // 1.3. Map PWM
     bmc2711_pwm_registers_t *pwm_regs = map_pwm_registers();
     if(!pwm_regs){
         fprintf(stderr, "Error: Could not configure PWM\n");
